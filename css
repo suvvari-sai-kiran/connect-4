@@ -1,0 +1,54 @@
+/* connect 4 */
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: url('image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+}
+
+#game {
+    text-align: center;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(7, 60px);
+    grid-template-rows: repeat(6, 60px);
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.cell.player1 {
+    background-color: red;
+}
+
+.cell.player2 {
+    background-color: yellow;
+}
+
+#status {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+#reset {
+    padding: 10px 20px;
+    font-size: 16px;
+}
