@@ -1,0 +1,104 @@
+// connect 4
+
+document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
+    const statusDisplay = document.getElementById('status');
+    const resetButton = document.getElementById('reset');
+    const rows = 6;
+    const cols = 7;
+    let currentPlayer = 1;
+    let gameActive = true;
+    let gameState = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+    function createBoard() {
+        board.innerHTML = '';
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.row = row;
+                cell.dataset.col = col;
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+    }
+
+    function handleCellClick(event) {
+        const col = event.target.dataset.col;
+        if (!gameActive) return;
+
+        // Find the first empty cell in the column
+        for (let row = rows - 1; row >= 0; row--) {
+            if (gameState[row][col] === 0) {
+                gameState[row][col] = currentPlayer;
+                updateBoard();
+                checkResult();
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+                break;
+            }
+        }
+    }
+
+    function updateBoard() {
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                const cell = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+                cell.classList.remove('player1', 'player2');
+                if (gameState[row][col] === 1) {
+                    cell.classList.add('player1');
+                } else if (gameState[row][col] === 2) {
+                    cell.classList.add('player2');
+                }
+            }
+        }
+    }
+
+    function checkResult() {
+        const winConditions = [
+            // Horizontal
+            [[0, 0], [0, 1], [0, 2], [0, 3]],
+            // Vertical
+            [[0, 0], [1, 0], [2, 0], [3, 0]],
+            // Diagonal
+            [[0, 0], [1, 1], [2, 2], [3, 3]],
+            [[0, 3], [1, 2], [2, 1], [3, 0]]
+        ];
+
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                if (gameState[row][col] !== 0) {
+                    const player = gameState[row][col];
+
+                    for (let condition of winConditions) {
+                        if (condition.every(([dr, dc]) => 
+                            gameState[row + dr] && gameState[row + dr][col + dc] === player)) {
+                            gameActive = false;
+                            statusDisplay.textContent = `Player ${player} wins!`;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (gameState.flat().every(cell => cell !== 0)) {
+            gameActive = false;
+            statusDisplay.textContent = 'It\'s a draw!';
+        }
+    }
+
+    function resetGame() {
+        gameState = Array.from({ length: rows }, () => Array(cols).fill(0));
+        currentPlayer = 1;
+        gameActive = true;
+        statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+        updateBoard();
+    }
+
+    resetButton.addEventListener('click', resetGame);
+
+    createBoard();
+    statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+});
